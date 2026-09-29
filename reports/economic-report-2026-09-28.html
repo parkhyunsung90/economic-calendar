@@ -82,10 +82,14 @@ col.importance{width:11%}
 .importance-stars[data-level="3"]{color:#e45b22}
 .importance-stars[data-level="2"]{color:#b68129}
 .importance-legend{margin:0 28px 16px;color:#7a837e;font-size:11px;line-height:1.55;text-align:right}
+tbody .date-row th{position:relative;text-align:center!important;padding-left:92px!important;padding-right:92px!important}
+.date-row .day-count{float:none!important;position:absolute;right:14px;top:50%;transform:translateY(-50%);padding-top:0!important}
 @media(max-width:700px){
   .importance-cell{display:flex!important;align-items:center;justify-content:space-between;text-align:right!important}
   .importance-cell::before{content:'중요성 (Impact)';color:#7a837e;font-size:11px;font-weight:700}
   .importance-legend{margin:0 16px 14px;text-align:left}
+  tbody .date-row th{padding-left:12px!important;padding-right:12px!important}
+  .date-row .day-count{position:static;display:block;margin-top:4px;transform:none}
 }
 </style></head>
 <body>
