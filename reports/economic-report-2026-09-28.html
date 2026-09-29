@@ -82,6 +82,8 @@ col.importance{width:11%}
 .importance-stars[data-level="3"]{color:#e45b22}
 .importance-stars[data-level="2"]{color:#b68129}
 .importance-legend{margin:0 28px 16px;color:#7a837e;font-size:11px;line-height:1.55;text-align:right}
+.flag.vector-flag{display:block!important;width:24px!important;height:16px!important;margin-bottom:5px!important;overflow:hidden!important;background:none!important;box-shadow:0 0 0 1px #00000014!important;font-size:0!important}
+.flag.vector-flag svg{display:block;width:100%;height:100%}
 tbody .date-row th{position:relative;text-align:center!important;padding-left:92px!important;padding-right:92px!important}
 .date-row .day-count{float:none!important;position:absolute;right:14px;top:50%;transform:translateY(-50%);padding-top:0!important}
 @media(max-width:700px){
@@ -303,6 +305,10 @@ const levelFor=name=>{
 };
 const labels={3:'★★★',2:'★★☆',1:'★☆☆'};
 const meanings={3:'핵심 변동성 가능성',2:'주의 깊게 볼 일정',1:'보조 확인 일정'};
+const flagSvgs={
+  au:'<svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="18" fill="#17447d"/><path d="M0 0h12v9H0z" fill="#24427a"/><path d="M0 0l12 9M12 0L0 9" stroke="#fff" stroke-width="2.4"/><path d="M0 0l12 9M12 0L0 9" stroke="#cf3344" stroke-width="1"/><path d="M6 0v9M0 4.5h12" stroke="#fff" stroke-width="2.5"/><path d="M6 0v9M0 4.5h12" stroke="#cf3344" stroke-width="1.3"/><g fill="#fff"><path d="M6 11.1l.55 1.4 1.5.08-1.16.95.39 1.47L6 14.17 4.72 15l.39-1.47-1.16-.95 1.5-.08z"/><circle cx="20.5" cy="4" r="1.15"/><circle cx="23.8" cy="7.4" r="1"/><circle cx="19.6" cy="11.2" r="1.1"/><circle cx="24" cy="14.1" r="1"/><circle cx="16.7" cy="7.2" r=".9"/></g></svg>',
+  cn:'<svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="18" fill="#df2638"/><g fill="#ffd34e"><path d="M5.5 2l.75 1.55 1.7.24-1.23 1.19.29 1.68-1.51-.8-1.51.8.29-1.68-1.23-1.19 1.7-.24z"/><circle cx="10.2" cy="2.7" r=".65"/><circle cx="11.7" cy="5" r=".65"/><circle cx="11.2" cy="7.7" r=".65"/><circle cx="9.2" cy="9.2" r=".65"/></g></svg>'
+};
 function decorate(){
   const table=document.querySelector('table[aria-label="날짜별 주요 경제지표 발표"]');
   if(!table)return;
@@ -319,6 +325,13 @@ function decorate(){
   }
   table.querySelectorAll('tbody tr.date-row th').forEach(th=>th.colSpan=7);
   table.querySelectorAll('tbody tr.data-row').forEach(row=>{
+    const flag=row.querySelector('.flag-au,.flag-cn');
+    if(flag&&!flag.dataset.vector){
+      flag.removeAttribute('style');
+      flag.classList.add('vector-flag');
+      flag.innerHTML=flag.classList.contains('flag-au')?flagSvgs.au:flagSvgs.cn;
+      flag.dataset.vector='true';
+    }
     if(row.querySelector('.importance-cell'))return;
     const name=(row.querySelector('.event-name')?.textContent||'').trim();
     const level=levelFor(name);
