@@ -74,7 +74,20 @@ h1 .en{font-size:14px;color:#9e8d76}h2 .en{font-size:13px}
 .tabs .en{font-size:10px}.pending .en{font-size:9px}.meaning-table td>.en{margin-top:10px}.analysis-summary>.en{margin-top:10px}
 @media(max-width:720px){.toolbar{flex-wrap:wrap}.tabs{flex:1}.tabs button{flex:1}.count{display:none}.headline{align-items:flex-start}.print{white-space:normal;max-width:90px}.mobile-label .en{font-size:9px}.analysis-heading{align-items:flex-start}.analysis-heading .edition{white-space:nowrap}.meaning-table td .en{font-size:11px}}
 </style>
-</head>
+<style id="economic-importance-style">
+col.importance{width:11%}
+.importance-head{text-align:center!important;white-space:nowrap}
+.importance-cell{text-align:center;white-space:nowrap;vertical-align:middle}
+.importance-stars{display:inline-block;color:#9aa0a6;font-size:14px;font-weight:800;letter-spacing:1px;line-height:1}
+.importance-stars[data-level="3"]{color:#e45b22}
+.importance-stars[data-level="2"]{color:#b68129}
+.importance-legend{margin:0 28px 16px;color:#7a837e;font-size:11px;line-height:1.55;text-align:right}
+@media(max-width:700px){
+  .importance-cell{display:flex!important;align-items:center;justify-content:space-between;text-align:right!important}
+  .importance-cell::before{content:'중요성 (Impact)';color:#7a837e;font-size:11px;font-weight:700}
+  .importance-legend{margin:0 16px 14px;text-align:left}
+}
+</style></head>
 <body>
 <main class="sheet">
 <header class="header">
@@ -275,5 +288,51 @@ table.append(tr);
 next.addEventListener('click',()=>render(false));last.addEventListener('click',()=>render(true));document.getElementById('print').addEventListener('click',()=>window.print());render(false);
 })();
 </script>
-</body>
+<script id="economic-importance-script">
+(()=>{
+const levelFor=name=>{
+  const core=/(금리결정|정책금리|FOMC (성명서|경제전망|기자회견)|ECB (예금금리|금리결정|기자회견)|BOJ (금리결정|성명서|기자회견)|SNB 금리결정|RBA (금리결정|성명서|기자회견)|CPI|PCE|비농업고용 변화|실업률|평균 시간당 임금|GDP|소매판매|ISM (제조업|서비스업) PMI)/;
+  const watch=/(PPI|PMI|ADP|JOLTS|소비자신뢰|실업수당|주택판매|원유재고|기자회견|연설|증언|회의록)/;
+  if(core.test(name))return 3;
+  if(watch.test(name))return 2;
+  return 1;
+};
+const labels={3:'★★★',2:'★★☆',1:'★☆☆'};
+const meanings={3:'핵심 변동성 가능성',2:'주의 깊게 볼 일정',1:'보조 확인 일정'};
+function decorate(){
+  const table=document.querySelector('table[aria-label="날짜별 주요 경제지표 발표"]');
+  if(!table)return;
+  const colgroup=table.querySelector('colgroup');
+  if(colgroup&&!colgroup.querySelector('col.importance')){
+    const col=document.createElement('col');col.className='importance';
+    colgroup.insertBefore(col,colgroup.children[3]||null);
+  }
+  const head=table.querySelector('thead tr');
+  if(head&&!head.querySelector('.importance-head')){
+    const th=document.createElement('th');th.className='importance-head';th.scope='col';
+    th.innerHTML='중요성 <span class="en" lang="en">(Impact)</span>';
+    head.insertBefore(th,head.children[3]||null);
+  }
+  table.querySelectorAll('tbody tr.date-row th').forEach(th=>th.colSpan=7);
+  table.querySelectorAll('tbody tr.data-row').forEach(row=>{
+    if(row.querySelector('.importance-cell'))return;
+    const name=(row.querySelector('.event-name')?.textContent||'').trim();
+    const level=levelFor(name);
+    const td=document.createElement('td');td.className='importance-cell';td.dataset.label='중요성 (Impact)';
+    const stars=document.createElement('span');stars.className='importance-stars';stars.dataset.level=String(level);
+    stars.textContent=labels[level];stars.title=meanings[level];stars.setAttribute('aria-label',`중요도 ${level}단계: ${meanings[level]}`);
+    td.append(stars);row.insertBefore(td,row.children[3]||null);
+  });
+  const wrap=table.closest('.table-wrap');
+  if(wrap&&!wrap.nextElementSibling?.classList.contains('importance-legend')){
+    const legend=document.createElement('p');legend.className='importance-legend';
+    legend.textContent='중요성: ★★★ 핵심 변동성 · ★★☆ 주의 · ★☆☆ 보조 (내부 추적 기준)';
+    wrap.insertAdjacentElement('afterend',legend);
+  }
+}
+decorate();
+const body=document.getElementById('events');
+if(body)new MutationObserver(()=>queueMicrotask(decorate)).observe(body,{childList:true});
+})();
+</script></body>
 </html>
