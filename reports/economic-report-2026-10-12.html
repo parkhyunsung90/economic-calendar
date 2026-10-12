@@ -194,6 +194,7 @@ const englishNames={"바 연설":"Barr Remarks","PCE":"PCE Price Index","근원 
 englishNames["월러 연설"]="Waller Remarks";
 englishNames["우에다 연설"]="Ueda Remarks";
 englishNames["해먹 연설"]="Hammack Remarks";
+englishNames["워시 연준 의장·IMF 총재 대담"]="Fed Chair Warsh–IMF Managing Director Discussion";
 const englishLabels={실제:'Actual',예상:'Forecast',이전:'Previous'};
 const englishParts={'계절조정':'Seasonally Adjusted','자동차 제외':'Excluding Autos','목표범위 상단':'Target Range Upper Bound','전월비':'MoM','전년비':'YoY','전분기비':'QoQ','전월 대비':'MoM','전년 대비':'YoY','전분기 대비':'QoQ','잠정':'Preliminary','확정':'Final','2차 속보':'Second Preliminary Estimate','연율':'Annualized','주요 재융자금리':'Main Refinancing Rate'};
 function enNode(text){const n=el('span','en','('+text+')');n.lang='en';return n}
@@ -237,7 +238,7 @@ next.addEventListener('click',()=>render(false));last.addEventListener('click',(
 (()=>{
 const levelFor=name=>{
   const core=/(금리결정|정책금리|FOMC (성명서|경제전망|기자회견)|ECB (예금금리|금리결정|기자회견)|BOJ (금리결정|성명서|기자회견)|SNB 금리결정|RBA (금리결정|성명서|기자회견)|CPI|PCE|비농업고용 변화|실업률|평균 시간당 임금|GDP|소매판매|ISM (제조업|서비스업) PMI)/;
-  const watch=/(PPI|PMI|ADP|JOLTS|소비자신뢰|실업수당|주택판매|원유재고|기자회견|연설|증언|회의록)/;
+  const watch=/(PPI|PMI|ADP|JOLTS|소비자신뢰|실업수당|주택판매|원유재고|기자회견|연설|증언|회의록|대담)/;
   if(core.test(name))return 3;
   if(watch.test(name))return 2;
   return 1;
